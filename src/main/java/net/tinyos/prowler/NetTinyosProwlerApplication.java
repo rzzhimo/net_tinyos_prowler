@@ -1,7 +1,11 @@
-package com.example.net_tinyos_prowler;
+package net.tinyos.prowler;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootApplication
 public class NetTinyosProwlerApplication {
@@ -43,14 +47,14 @@ public class NetTinyosProwlerApplication {
             }
             for (int i = 0; i < nodes.size(); i++) {
                 Node node = nodes.get(i);
-                node.setX(node.getX() + node.getVx());
-                node.setY(node.getY() + node.getVy());
-                if (node.getX() < 0 || node.getX() > 500) {
-                    node.setVx(node.getVx() * -1);
-                }
-                if (node.getY() < 0 || node.getY() > 500) {
-                    node.setVy(node.getVy() * -1);
-                }
+//                node.setX(node.getX() + node.getVx());
+//                node.setY(node.getY() + node.getVy());
+//                if (node.getX() < 0 || node.getX() > 500) {
+//                    node.setVx(node.getVx() * -1);
+//                }
+//                if (node.getY() < 0 || node.getY() > 500) {
+//                    node.setVy(node.getVy() * -1);
+//                }
             }
             try {
                 Thread.sleep(50);
