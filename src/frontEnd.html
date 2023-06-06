@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Simulation</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <div>
+        <label for="nodeCount">Node Count:</label>
+        <input type="number" id="nodeCount" v-model="nodeCount">
+        <button @click="startSimulation">Start</button>
+        <button @click="stopSimulation">Stop</button>
+        <button @click="getNode">getNode</button>
+    </div>
+</div>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            nodeCount: 10,
+            isRunning: false,
+            items:[],
+            maxCoordinate:0,
+        },
+        mounted() {
+            this.canvas = document.getElementById('canvas');
+            this.ctx = this.canvas.getContext('2d');
+        },
+        methods: {
+            //用于画图
+            getSimuState(){
+                axios.get('http://127.0.0.1:8082/simulation/getSimuState')
+                    .then(response => {
+                        console.log(response.data);
+                        this.maxCoordinate = response.data;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
+            //向后端获取各个节点的状态。每次获取nodeCount条数据
+            getNode(){
+                this.getSimuState();//用于画图
+                axios.get('http://127.0.0.1:8082/simulation/getNetworkState')
+                    .then(response => {
+                        console.log(response.data);
+                        this.items = response.data;
+                        this.draw2();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
+            startSimulation() {
+                axios(
+                    {
+                        url: 'http://127.0.0.1:8082/simulation/simustart',
+                        method: 'POST',
+                        params: {nodeCount: this.nodeCount}
+                    })
+                    .then(response => {
+                        console.log(response.data);
+                        this.isRunning = true;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+                //间隔2秒后，向后端取数据
+                setTimeout(this.getNode, 2000); // 2秒钟向后端拉取一次数据
+            },
+            //停止模拟。（前端页面不展示）
+            stopSimulation() {
+                this.isRunning = false;
+                axios(
+                    {
+                        url: 'http://127.0.0.1:8082/simulation/simustop',
+                        method: 'POST',
+                    })
+                    .then(response => {
+                        console.log(response.data);
+                        this.draw2();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
+            draw2(){
+                if (!this.isRunning) {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    return;
+                }
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                for (let i = 0; i < this.items.length; i++) {
+                    let node = this.items[i];
+
+                    node.x = 40+((this.canvas.width-80)  * node.x / this.maxCoordinate);
+                    node.y = 40+((this.canvas.width-80)  * node.y / this.maxCoordinate);
+                    //画点
+                    this.drawNode(node.x,node.y,node.color);
+
+                    //画线
+                    if (node.x1!==-1&&node.y1!==-1){
+
+                        node.x1 = 40+((this.canvas.width-80)  * node.x1 / this.maxCoordinate);
+                        node.y1 = 40+((this.canvas.width-80)  * node.y1 / this.maxCoordinate);
+
+                        this.drawLink(node.x,node.y,node.x1,node.y1);
+                    }
+                }
+            },
+            //画点
+            drawNode(x,y,color){
+                this.ctx.fillStyle = color;
+                this.ctx.beginPath();
+                this.ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                this.ctx.fill();
+            },
+            //画线
+            drawLink(x,y,x1,y1){
+                this.ctx.beginPath();
+                this.ctx.moveTo(x, y);
+                this.ctx.lineTo(x1, y1);
+                this.ctx.stroke();
+            },
+            updateNode(x,y){
+
+            },
+            updateLink(x1,y1,x2,y2){
+
+            },
+        }
+    })
+</script>
+</body>
+</html>

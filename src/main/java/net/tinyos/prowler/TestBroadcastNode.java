@@ -149,7 +149,7 @@ public class TestBroadcastNode extends Mica2Node{
 
 
 		// creating all the other nodes
-		Node tempNode = sim.createNodes( TestBroadcastNode.class, radioModel, 2, 1000, 300, 5);
+		Node tempNode = sim.createNodes( TestBroadcastNode.class, radioModel, 2, 500, 300, 5);
 		while (tempNode != null){
 			BroadcastApplication tempBcApp = ((TestBroadcastNode)tempNode).new BroadcastApplication(tempNode);
 			tempNode = tempNode.nextNode;

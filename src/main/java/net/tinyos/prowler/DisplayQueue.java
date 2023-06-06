@@ -1,7 +1,12 @@
 package net.tinyos.prowler;
 
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.List;
 
 public class DisplayQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
 
@@ -30,9 +35,6 @@ public class DisplayQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
 	{
 		return sim;
 	}
-
-
-	
 	
     public void writeNodeState(TestBroadcastNode node) {
 		if (node.getX() > maxCoordinate)
@@ -106,5 +108,53 @@ public class DisplayQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
 		}
     }
 
+	public double getNodeState(){
+
+		return maxCoordinate;
+	}
+
+	//获取当前网络状态。返回给前端画图
+	public JSONArray getNetworkState(int nodecount){
+
+		JSONArray result = new JSONArray();
+		int count = 0;
+		//只返回前nodeCount个，防止数据过多
+		while(!this.isEmpty()&&count < nodecount) {
+			count++;
+			TestBroadcastNode nowNode =  this.poll();
+			JSONObject jo = new JSONObject();
+			jo.put("id",nowNode.getId());
+			jo.put("x",nowNode.getX());
+			jo.put("y",nowNode.getY());
+			String nodeColor = "";
+			if(nowNode.sending){
+				nodeColor = "blue";
+			}else if( nowNode.receiving ){
+				if( nowNode.corrupted )
+					nodeColor = "red";
+				else
+					nodeColor = "green";
+			}else{
+				if( nowNode.sent )
+					nodeColor = "pink";
+				else
+					nodeColor = "black";
+			}
+			jo.put("color",nodeColor);
+			if(nowNode.getParent()!= null ){
+				double x1 = nowNode.getParent().getX();
+				double y1 = nowNode.getParent().getY();
+				jo.put("x1",x1);
+				jo.put("y1",y1);
+			}
+			else {
+				jo.put("x1",-1);
+				jo.put("y1",-1);
+			}
+			result.add(jo);
+		}
+		//this.clear();//清除剩余的数据
+		return result;
+	}
 
 }
