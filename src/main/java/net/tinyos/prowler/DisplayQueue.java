@@ -100,7 +100,6 @@ public class DisplayQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
 				int x1 = disp.x2ScreenX(nowNode.getParent().getX());
 				int y1 = disp.y2ScreenY(nowNode.getParent().getY());
 				g.drawLine(x,y,x1,y1);
-				g.drawLine(x,y,x1,y1);
 
 			}
 
@@ -114,10 +113,10 @@ public class DisplayQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
 	}
 
 	//获取当前网络状态。返回给前端画图
-	public JSONArray getNetworkState(int nodecount){
+	public JSONArray getNetworkState(Integer nodecount){
 
 		JSONArray result = new JSONArray();
-		int count = 0;
+		Integer count = 0;
 		//只返回前nodeCount个，防止数据过多
 		while(!this.isEmpty()&&count < nodecount) {
 			count++;

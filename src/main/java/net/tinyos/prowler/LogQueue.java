@@ -64,13 +64,11 @@ public class LogQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
             data = data + "{";
             out.write(data);
             out.newLine();
-            data = "maxCoordinate: " + maxCoordinate;
+            data = "\"maxCoordinate\": " + maxCoordinate + ",\n";
             out.write(data);
-            out.newLine();
-            data = "length: " + this.size();
+            data = "\"length\": " + this.size()+",\n";
             out.write(data);
-            out.newLine();
-            data = "    [";
+            data = "\"message\": [" ;
             out.write(data);
             out.newLine();
             while(!this.isEmpty()) {
@@ -78,32 +76,40 @@ public class LogQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
                 data = "    {";
                 out.write(data);
                 out.newLine();
-                data = "        id: "+nowNode.getId()+"\n";
-                data = data + "        maxRadioStrength: "+nowNode.getMaximumRadioStrength()+"\n";
-                data = data + "        x: "+nowNode.getX()+"\n";
-                data = data + "        y: "+nowNode.getY()+"\n";
-                data = data + "        z: "+nowNode.getZ()+"\n";
-                data = data + "        sending: "+String.valueOf(nowNode.sending)+"\n";
-                data = data + "        transmitting: "+String.valueOf(nowNode.transmitting)+"\n";
-                data = data + "        receiving: "+String.valueOf(nowNode.receiving)+"\n";
-                data = data + "        corrupted: "+String.valueOf(nowNode.corrupted)+"\n";
-                data = data + "        sendingPostponed: "+String.valueOf(nowNode.sendingPostponed)+"\n";
-                data = data + "        sendMinWaitingTime: "+nowNode.sendMinWaitingTime+"\n";
-                data = data + "        sendRandomWaitingTime: "+nowNode.sendRandomWaitingTime+"\n";
-                data = data + "        sendMinBackOffTime: "+nowNode.sendMinBackOffTime+"\n";
-                data = data + "        sendRandomBackOffTime: "+nowNode.sendRandomBackOffTime+"\n";
-                data = data + "        sendTransmissionTime: "+nowNode.sendTransmissionTime+"\n";
-                data = data + "        noiseVariance: "+nowNode.noiseVariance+"\n";
-                data = data + "        maxAllowedNoiseOnSending: "+nowNode.maxAllowedNoiseOnSending+"\n";
-                data = data + "        receivingStartSNR: "+nowNode.receivingStartSNR+"\n";
-                data = data + "        corruptionSNR: "+nowNode.corruptionSNR+"\n";
-                data = data + "        sent: "+String.valueOf(nowNode.sent)+"\n";
+                data = "        \"id\": "+nowNode.getId()+",\n";
+                data = data + "        \"maxRadioStrength\": "+nowNode.getMaximumRadioStrength()+",\n";
+                data = data + "        \"x\": "+nowNode.getX()+",\n";
+                data = data + "        \"y\": "+nowNode.getY()+",\n";
+                data = data + "        \"z\": "+nowNode.getZ()+",\n";
+                data = data + "        \"sending\": "+String.valueOf(nowNode.sending)+",\n";
+                data = data + "        \"transmitting\": "+String.valueOf(nowNode.transmitting)+",\n";
+                data = data + "        \"receiving\": "+String.valueOf(nowNode.receiving)+",\n";
+                data = data + "        \"corrupted\": "+String.valueOf(nowNode.corrupted)+",\n";
+                data = data + "        \"sendingPostponed\": "+String.valueOf(nowNode.sendingPostponed)+",\n";
+                data = data + "        \"sendMinWaitingTime\": "+nowNode.sendMinWaitingTime+",\n";
+                data = data + "        \"sendRandomWaitingTime\": "+nowNode.sendRandomWaitingTime+",\n";
+                data = data + "        \"sendMinBackOffTime\": "+nowNode.sendMinBackOffTime+",\n";
+                data = data + "        \"sendRandomBackOffTime\": "+nowNode.sendRandomBackOffTime+",\n";
+                data = data + "        \"sendTransmissionTime\": "+nowNode.sendTransmissionTime+",\n";
+                data = data + "        \"noiseVariance\": "+nowNode.noiseVariance+",\n";
+                data = data + "        \"maxAllowedNoiseOnSending\": "+nowNode.maxAllowedNoiseOnSending+",\n";
+                data = data + "        \"receivingStartSNR\": "+nowNode.receivingStartSNR+",\n";
+                data = data + "        \"corruptionSNR\": "+nowNode.corruptionSNR+",\n";
                 if(nowNode.getParent() != null)
                 {
-                    data = data + "        parentNodeId: "+nowNode.getParent().getId()+"\n";
+                    data = data + "        \"parentNodeId\": "+nowNode.getParent().getId()+",\n";
                 }
+                data = data + "        \"sent\": "+String.valueOf(nowNode.sent)+"\n";
                 out.write(data);
-                data = "    }";
+                if (!this.isEmpty()){
+                    data = "    },";
+                }
+                else {
+                    data = "    }";
+                    out.write(data);
+                    out.newLine();
+                    break;//退出
+                }
                 out.write(data);
                 out.newLine();
 //                out.newLine();

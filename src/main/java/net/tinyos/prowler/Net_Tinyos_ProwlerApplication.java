@@ -29,9 +29,9 @@ public class Net_Tinyos_ProwlerApplication {
         DisplayQueue dispQ = null;
         LogQueue logQueue = null;
 
-        int nodeCount = 0;
+        Integer nodeCount = 0;//决定模拟的节点数，并且每次只向前端返回nodeCount个节点信息。
 
-        //用于获取当前的网络状态，里面是点的集合，包括了他的id，x,y坐标，以及他parent的x1,y1坐标，方便前端画图
+        //用于获取当前的网络状态，里面是节点的集合，包括了他的id，x,y坐标，以及他parent的x1,y1坐标，方便前端画图
         @GetMapping("/getNetworkState")
         public JSONArray getNetworkState() {
             return dispQ.getNetworkState(nodeCount);
@@ -46,22 +46,23 @@ public class Net_Tinyos_ProwlerApplication {
         @PostMapping("/simustop")
         public JSONObject stopSimulation() {
             isRunning = false;
+            sim.runWithDisplayInRealTime(dispQ,logQueue,isRunning); //停止仿真引擎线程
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("stop", "successfully stop！ ");
             return jsonObject;
         }
         //用于跑仿真引擎的线程
         @PostMapping("/simustart")
-        public JSONObject postNodeCount(@RequestParam int nodeCount) {
+        public JSONObject postNodeCount(@RequestParam Integer nodeCount) {
 
-            this.nodeCount = nodeCount;
+            this.nodeCount = nodeCount;//节点数
             System.out.println(nodeCount);
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("post", "successfully post！ ");
+            jsonObject.put("start", "successfully start！ ");
 
             try{
                 // 在这里运行仿真引擎
-                System.out.println("creating nodes...1");
+                System.out.println("creating nodes..."+nodeCount.toString());
                 sim = new Simulator();
 
                 // creating the desired radio model, uncomment the one you need
@@ -84,20 +85,21 @@ public class Net_Tinyos_ProwlerApplication {
                 // field is set up
                 radioModel.updateNeighborhoods();
 
-                System.out.println("creation time1: " + (System.currentTimeMillis()-time0) + " millisecs" );
+                System.out.println("creation time: " + (System.currentTimeMillis()-time0) + " millisecs" );
                 final long time1 = System.currentTimeMillis();
 
-                System.out.println("start simulation1");
+                System.out.println("start simulation");
 
-                root.sendMessage( "test message1", bcApp );
+                root.sendMessage( "test message", bcApp );
                 dispQ = new DisplayQueue();    //创建两个队列
                 logQueue = new LogQueue();
 
-                sim.runWithDisplayInRealTime(dispQ,logQueue); //获取数据
-                /**
-                 * 进行输出以及文件导出,不需要
-                 */
-                isRunning = true;//设一个标记，防止前端取不到数据
+                isRunning = true;//设一个标记，为False时则停止仿真引擎
+
+                System.out.println("仿真引擎启动！");
+                sim.runWithDisplayInRealTime(dispQ,logQueue,isRunning); //开始仿真引擎线程，获取数据
+
+
             }
             catch (Exception e) {
                 e.printStackTrace();

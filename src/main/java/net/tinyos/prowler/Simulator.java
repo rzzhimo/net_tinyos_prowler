@@ -195,7 +195,7 @@ public class Simulator{
 	 * The user of the simulator must first add all the nodes used in the 
 	 * experiment!
 	 */
-	public void runWithDisplayInRealTime(DisplayQueue dispQ, LogQueue logQueue){
+	public void runWithDisplayInRealTime(DisplayQueue dispQ, LogQueue logQueue, Boolean isRunning){
 		Simulator that = this;
 		Thread t = new Thread(){
 			public void run(){
@@ -204,7 +204,7 @@ public class Simulator{
 //				disp.show();
                 
 				long initDiff = System.currentTimeMillis() - getSimulationTimeInMillisec();
-				while( true ){                //数据量过大修改
+				while(isRunning){                //数据量过大修改
 //				int totalStep = 100;
 //				while(totalStep >= 0){
 //					totalStep-=1;
@@ -227,6 +227,7 @@ public class Simulator{
 						}
 					}
 				}
+				System.out.println("仿真引擎停止！");
 			}            
 		};
 		t.start();
