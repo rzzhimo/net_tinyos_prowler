@@ -42,9 +42,14 @@ public class Net_Tinyos_ProwlerApplication {
             return  sim.getMaxCoordinate();
         }
 
-        //用于停止模拟，待完善
+        //用于停止模拟，已完善
         @PostMapping("/simustop")
         public JSONObject stopSimulation() {
+            if (!isRunning){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("stop", "no simulation is running！ ");
+                return jsonObject;
+            }
             isRunning = false;
             sim.runWithDisplayInRealTime(dispQ,logQueue,isRunning); //停止仿真引擎线程
             JSONObject jsonObject = new JSONObject();
@@ -54,11 +59,15 @@ public class Net_Tinyos_ProwlerApplication {
         //用于跑仿真引擎的线程
         @PostMapping("/simustart")
         public JSONObject postNodeCount(@RequestParam Integer nodeCount) {
-
+            if (isRunning){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("start", "already has a simulation is running, please stop first！ ");
+                return jsonObject;
+            }
             this.nodeCount = nodeCount;//节点数
             System.out.println(nodeCount);
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("start", "successfully start！ ");
+            jsonObject.put("start", "successfully start!");
 
             try{
                 // 在这里运行仿真引擎

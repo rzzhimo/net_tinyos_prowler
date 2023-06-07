@@ -152,7 +152,7 @@ public class DisplayQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
 			}
 			result.add(jo);
 		}
-		//this.clear();//清除剩余的数据
+//		this.clear();//清除剩余的数据
 		return result;
 	}
 
