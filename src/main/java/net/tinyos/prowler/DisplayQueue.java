@@ -118,7 +118,7 @@ public class DisplayQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
 		JSONArray result = new JSONArray();
 		Integer count = 0;
 		//只返回前nodeCount个，防止数据过多
-		while(!this.isEmpty()&&count < nodecount) {
+		while(!this.isEmpty()&&count <= nodecount) {
 			count++;
 			TestBroadcastNode nowNode =  this.poll();
 			JSONObject jo = new JSONObject();
