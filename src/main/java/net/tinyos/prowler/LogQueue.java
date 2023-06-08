@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class LogQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
 
+
     private Simulator sim;
     private double maxCoordinate = 0;
     private String outputPath = "./output";
@@ -85,16 +86,19 @@ public class LogQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
                 data = data + "        \"transmitting\": "+String.valueOf(nowNode.transmitting)+",\n";
                 data = data + "        \"receiving\": "+String.valueOf(nowNode.receiving)+",\n";
                 data = data + "        \"corrupted\": "+String.valueOf(nowNode.corrupted)+",\n";
-                data = data + "        \"sendingPostponed\": "+String.valueOf(nowNode.sendingPostponed)+",\n";
-                data = data + "        \"sendMinWaitingTime\": "+nowNode.sendMinWaitingTime+",\n";
-                data = data + "        \"sendRandomWaitingTime\": "+nowNode.sendRandomWaitingTime+",\n";
-                data = data + "        \"sendMinBackOffTime\": "+nowNode.sendMinBackOffTime+",\n";
-                data = data + "        \"sendRandomBackOffTime\": "+nowNode.sendRandomBackOffTime+",\n";
-                data = data + "        \"sendTransmissionTime\": "+nowNode.sendTransmissionTime+",\n";
-                data = data + "        \"noiseVariance\": "+nowNode.noiseVariance+",\n";
-                data = data + "        \"maxAllowedNoiseOnSending\": "+nowNode.maxAllowedNoiseOnSending+",\n";
-                data = data + "        \"receivingStartSNR\": "+nowNode.receivingStartSNR+",\n";
-                data = data + "        \"corruptionSNR\": "+nowNode.corruptionSNR+",\n";
+//                data = data + "        \"sendingPostponed\": "+String.valueOf(nowNode.sendingPostponed)+",\n";
+//                data = data + "        \"sendMinWaitingTime\": "+nowNode.sendMinWaitingTime+",\n";
+//                data = data + "        \"sendRandomWaitingTime\": "+nowNode.sendRandomWaitingTime+",\n";
+//                data = data + "        \"sendMinBackOffTime\": "+nowNode.sendMinBackOffTime+",\n";
+//                data = data + "        \"sendRandomBackOffTime\": "+nowNode.sendRandomBackOffTime+",\n";
+//                data = data + "        \"sendTransmissionTime\": "+nowNode.sendTransmissionTime+",\n";
+//                data = data + "        \"noiseVariance\": "+nowNode.noiseVariance+",\n";
+//                data = data + "        \"maxAllowedNoiseOnSending\": "+nowNode.maxAllowedNoiseOnSending+",\n";
+//                data = data + "        \"receivingStartSNR\": "+nowNode.receivingStartSNR+",\n";
+//                data = data + "        \"corruptionSNR\": "+nowNode.corruptionSNR+",\n";
+                data = data + "        \"msg_seqId\": "+nowNode.msg_seq+",\n";
+                data = data + "        \"msg_ttl\": "+nowNode.msg_ttl+",\n";
+                data = data + "        \"msg_cache_size\": "+nowNode.msg_cache.size()+",\n";
                 if(nowNode.getParent() != null)
                 {
                     data = data + "        \"parentNodeId\": "+nowNode.getParent().getId()+",\n";
@@ -127,7 +131,4 @@ public class LogQueue extends ConcurrentLinkedDeque<TestBroadcastNode> {
         }
 
     }
-
-
-
 }

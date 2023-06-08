@@ -26,6 +26,8 @@ package net.tinyos.prowler;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a sample application, it shows a way of utilizing the Prowler 
@@ -40,6 +42,18 @@ public class TestBroadcastNode extends Mica2Node{
 
 	/** This field is true if this mote rebroadcasted the message already. */
 	boolean sent = false;
+
+	/*记录节点收到的历史消息*/
+	List<Message> msg_cache = new ArrayList<>();
+
+	//记录这个节点现在收到的信息
+	Message msg_now = null;
+
+	//这条信息记录这个节点收到的信息的ttl，-1代表没有信息
+	int msg_ttl = -1;
+	//这条信息记录这个节点收到的信息的seqId，-1代表没有信息
+	int msg_seq = -1;
+
 
 	/** This field stores the mote from which the message was first received. */
 	private Node parent = null; 
@@ -65,6 +79,51 @@ public class TestBroadcastNode extends Mica2Node{
 		public void receiveMessage(Object message ){
 			if (parent == null){
 				parent = parentNode;
+
+				msg_now = (Message) message;
+
+				//收到过期的数据(ttl<=0)，不再转发，直接返回
+				if (msg_now.getTtl()<=0){
+					msg_ttl = 0;
+					msg_seq = msg_now.getSeqId();
+					return;
+				}
+
+				if (msg_cache.size()>0){
+					//更新cache里每条信息的ttl
+					for(Message msg: msg_cache){
+						msg.ttl = msg.ttl-1;
+						if (msg.getTtl()<=0){
+							msg_cache.remove(msg);//删除掉过于久远的cache
+						}
+					}
+					//增加判断，如果接收过改信息且该信息还有效，说明段时间内已经发送过，就不转发；否则将cache里的旧信息替换为新信息
+					for (Message msg:msg_cache){
+						if(msg.getSeqId() == msg_now.getSeqId()){//缓存中接收过该消息,不发送，直接返回
+							if (msg.getTtl()>0){//缓存中存在该消息且ttl不为0
+								msg_ttl = msg.getTtl();
+								msg_seq = msg_now.getSeqId();
+								return;
+							}
+							else {//缓存中该消息ttl已经为0
+								int idx = msg_cache.indexOf(msg);
+								msg_cache.set(idx,msg_now);
+							}
+						}
+					}
+				}
+
+				//未接收过该信息，则将该信息加入缓存
+				msg_cache.add(msg_now);
+
+//				//保证msg_cacahe最多留存10条信息
+//				if (msg_cache.size()>10){
+//					msg_cache.remove(0);
+//				}
+				msg_seq = msg_now.seqId;
+				msg_ttl = msg_now.ttl;
+				msg_now.ttl -=1;//将nowMessage的ttl-1然后再发送
+
 				sendMessage( message );
 			}            
 		}    
