@@ -1,5 +1,7 @@
 package net.tinyos.prowler;
 
+import java.util.Random;
+
 public class RunSimulation {
 
     /**
@@ -39,7 +41,12 @@ public class RunSimulation {
 
         System.out.println("start simulation");
 
-        root.sendMessage( "test message", bcApp );
+        //因为只会发送一条消息，所以message的seqid自始至终只有一个值。
+        Random random = new Random();
+        int seqId = random.nextInt(100);
+        //改用包装起来的Message类传递信息,这里可以改消息的存活时间ttl
+        Message message1 = new Message(seqId,"test message",500);
+        root.sendMessage( message1, bcApp );
 
         DisplayQueue dispQ = new DisplayQueue();    //创建两个队列
         LogQueue logQueue = new LogQueue();
@@ -47,8 +54,6 @@ public class RunSimulation {
         boolean realTime = true;
         if( realTime )
         {
-//            sim.runWithDisplayInRealTime();
-
 
             sim.runWithDisplayInRealTime(dispQ,logQueue,Boolean.TRUE); //获取数据
 

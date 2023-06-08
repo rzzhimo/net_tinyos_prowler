@@ -8,6 +8,7 @@ import net.minidev.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 @SpringBootApplication
@@ -99,7 +100,13 @@ public class Net_Tinyos_ProwlerApplication {
 
                 System.out.println("start simulation");
 
-                root.sendMessage( "test message", bcApp );
+                //因为只会发送一条消息，所以message的seqid自始至终只有一个值。
+                Random random = new Random();
+                int seqId = random.nextInt(100);
+                //改用包装起来的Message类传递信息,这里可以改消息的存活时间ttl
+                Message message1 = new Message(seqId,"test message",500);
+                root.sendMessage( message1, bcApp );
+
                 dispQ = new DisplayQueue();    //创建两个队列
                 logQueue = new LogQueue();
 
